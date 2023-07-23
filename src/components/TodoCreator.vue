@@ -29,7 +29,7 @@ const createTodo = () => {
 <template>
   <div class="input-wrap" :class="{ 'input-err': todoState.invalid }">
     <input type="text" v-model="todoState.todo" />
-    <TodoButton @click="createTodo" :todo="todo" />
+    <TodoButton @click="createTodo" :todo="todoState.todo" />
   </div>
   <p v-show="todoState.invalid" class="err-msg">{{ todoState.errMsg }}</p>
 </template>
