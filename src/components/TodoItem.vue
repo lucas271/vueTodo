@@ -16,7 +16,7 @@ defineEmits(['toggle-complete', 'edit-todo', 'update-todo', 'delete-todo'])
 </script>
 
 <template>
-  <li>
+  <li name="item">
     <input type="checkbox" :checked="todo.isCompleted" @input="$emit('toggle-complete', index)" />
     <div class="todo">
       <input
@@ -36,8 +36,10 @@ defineEmits(['toggle-complete', 'edit-todo', 'update-todo', 'delete-todo'])
         class="icon"
         color="#41b080"
         width="22"
+        height="22"
         @click="$emit('edit-todo', index)"
       />
+
       <Icon
         v-else
         icon="ph:pencil-fill"
@@ -51,13 +53,18 @@ defineEmits(['toggle-complete', 'edit-todo', 'update-todo', 'delete-todo'])
         class="icon"
         color="#f95e5e"
         width="22"
-        @click="$emit('delete-todo', todo.id)"
+        @click="$emit('delete-todo', todo.id, $event.target)"
       />
     </div>
   </li>
 </template>
 
 <style lang="scss" scoped>
+.animate-out {
+  transform: translateX(20%);
+  opacity: 0;
+  transition: all 1s ease;
+}
 li {
   display: flex;
   align-items: center;

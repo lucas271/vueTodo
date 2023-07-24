@@ -43,7 +43,8 @@ const createTodo = (todo: string): void => {
   })
 }
 
-const toggleTodoComplete = (todoPos: number): void => {
+const toggleTodoComplete = (todoPos: number, event: any): void => {
+  console.log(event.parentElement)
   todoList.value[todoPos].isCompleted = !todoList.value[todoPos].isCompleted
 }
 const toggleEditTodo = (todoPos: number): void => {
@@ -52,13 +53,18 @@ const toggleEditTodo = (todoPos: number): void => {
 
 const updateTodo = (todoVal: string, todoPos: number): void => {
   todoList.value[todoPos].todo = todoVal
-  console.log(todoVal)
 }
-const deleteTodo = (todoId: string): void => {
-  const todoIndex = todoList.value.findIndex((todo) => todo.id === todoId)
-  if (todoIndex < 0) return
+const deleteTodo = (todoId: string, element: any): void => {
+  const animateElement = element.closest('[name="item"]')
+  animateElement.classList.add('animate-out')
 
-  todoList.value.splice(todoIndex, 1)
+  animateElement.addEventListener('transitionend', () => {
+    setTimeout(() => {
+      const todoIndex = todoList.value.findIndex((todo) => todo.id === todoId)
+      if (todoIndex < 0) return
+      todoList.value.splice(todoIndex, 1)
+    }, 500)
+  })
 }
 </script>
 
@@ -66,21 +72,26 @@ const deleteTodo = (todoId: string): void => {
   <main>
     <h1>Create Todo</h1>
     <TodoCreator @create-todo="createTodo" />
-    <ul class="todo-list" v-if="todoList.length > 0">
-      <draggable v-model="todoList" :component-data="{ name: 'fade', appear: true }" item-key="id">
-        <template #item="{ element: todo }">
-          <TodoItem
-            :key="todo.id"
-            :todo="todo"
-            :index="todoList.findIndex((element) => element.id === todo.id)"
-            @toggle-complete="toggleTodoComplete"
-            @edit-todo="toggleEditTodo"
-            @update-todo="updateTodo"
-            @delete-todo="deleteTodo"
-          />
-        </template>
-      </draggable>
-    </ul>
+    <draggable
+      animation="200"
+      v-model="todoList"
+      item-key="id"
+      tag="ul"
+      :component-data="{ class: 'todo-list' }"
+      v-if="todoList.length > 0"
+    >
+      <template #item="{ element: todo }">
+        <TodoItem
+          :key="todo.id"
+          :todo="todo"
+          :index="todoList.findIndex((element) => element.id === todo.id)"
+          @toggle-complete="toggleTodoComplete"
+          @edit-todo="toggleEditTodo"
+          @update-todo="updateTodo"
+          @delete-todo="deleteTodo"
+        />
+      </template>
+    </draggable>
 
     <p class="todos-msg" v-else>
       <Icon icon="noto-v1:sad-but-relieved-face" width="22" />
